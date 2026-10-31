@@ -29,6 +29,16 @@ async function req(path: string, options?: RequestInit) {
   return r.json()
 }
 
+export function formatPlan(raw: string | null): string | null {
+  if (!raw) return null
+  try {
+    const p = JSON.parse(raw)
+    if (p.action === 'split') return `Split payment: ${p.first_pct}% now, the rest within 14 days`
+    if (p.action === 'discount') return `${p.discount_pct}% discount for fast settlement`
+    return null
+  } catch { return null }
+}
+
 export const api = {
   health: () => req('/health'),
   listInvoices: (): Promise<Invoice[]> => req('/api/invoices'),

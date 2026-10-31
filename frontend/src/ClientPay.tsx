@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api, type Invoice, type Message } from './api'
+import { api, formatPlan, type Invoice, type Message } from './api'
 
 export default function ClientPay({ invoiceId }: { invoiceId: string }) {
   const [inv, setInv] = useState<(Invoice & { messages: Message[] }) | null>(null)
@@ -39,7 +39,7 @@ export default function ClientPay({ invoiceId }: { invoiceId: string }) {
         <div className="pay-amount">${inv.amount.toFixed(2)}</div>
         <p>Client: {inv.client_name} · Due: {inv.due_date}</p>
         <p>Status: <strong style={{ color: paid ? '#0a6c4f' : '#7a5b00' }}>{inv.status}</strong></p>
-        {inv.agreed_plan && <p className="plan">Agreed plan: {inv.agreed_plan}</p>}
+        {formatPlan(inv.agreed_plan) && <p className="plan">Agreed plan: {formatPlan(inv.agreed_plan)}</p>}
         {!paid && (
           inv.pay_link && !inv.pay_link.includes('MOCK-')
             ? <a className="pay-btn" href={inv.pay_link} target="_blank" rel="noreferrer">Pay with PayPal</a>

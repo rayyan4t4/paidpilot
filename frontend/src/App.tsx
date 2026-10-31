@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import { AllCommunityModule, ModuleRegistry, themeQuartz, type ColDef } from 'ag-grid-community'
-import { api, type Invoice } from './api'
+import { api, formatPlan, type Invoice } from './api'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 
@@ -63,13 +63,13 @@ export default function App() {
 
   const columnDefs = useMemo<ColDef<Invoice>[]>(() => [
     { field: 'client_name', headerName: 'Client', flex: 1.2 },
-    { field: 'description', headerName: 'Work', flex: 2 },
+    { field: 'description', headerName: 'Work', flex: 1.7 },
     { field: 'amount', headerName: 'Amount', flex: 0.8, valueFormatter: p => `$${Number(p.value).toFixed(2)}` },
     { field: 'due_date', headerName: 'Due', flex: 0.8 },
     { field: 'status', headerName: 'Status', flex: 0.8, cellStyle: p => ({ color: p.value === 'PAID' ? '#0a6c4f' : isOverdue(p.data!) ? '#b3261e' : '#7a5b00', fontWeight: 600 }) },
     { field: 'reminders', headerName: 'Reminders', flex: 0.7 },
     {
-      headerName: '', flex: 1.4, sortable: false, filter: false,
+      headerName: '', width: 262, sortable: false, filter: false,
       cellRenderer: (p: { data: Invoice }) => (
         <span style={{ display: 'flex', gap: 6 }}>
           <button onClick={() => openInvoice(p.data)}>Thread</button>
@@ -119,7 +119,7 @@ export default function App() {
           <p>{selected.description} · due {selected.due_date} · {selected.status}</p>
           {selected.pay_link && <p><a href={selected.pay_link} target="_blank" rel="noreferrer">PayPal invoice link</a></p>}
           <p><a href={`/pay/${selected.id}`} target="_blank" rel="noreferrer">Open the client payment page</a></p>
-          {selected.agreed_plan && <p className="plan">Agreed plan: {selected.agreed_plan}</p>}
+          {formatPlan(selected.agreed_plan) && <p className="plan">Agreed plan: {formatPlan(selected.agreed_plan)}</p>}
           <div className="thread">
             {(selected.messages || []).map((m, i) => (
               <div key={i} className={`msg ${m.role}`}><span>{m.role}</span>{m.body}</div>
