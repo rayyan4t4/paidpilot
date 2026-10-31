@@ -1,14 +1,15 @@
+import time
 import uuid
 
 import httpx
 
 from . import config
 
-_token = {"value": None}
+_token = {"value": None, "expires_at": 0.0}
 
 
 async def _access_token():
-    if _token["value"]:
+    if _token["value"] and time.time() < _token["expires_at"]:
         return _token["value"]
     async with httpx.AsyncClient(base_url=config.PAYPAL_BASE, timeout=30) as client:
         r = await client.post(
@@ -17,7 +18,9 @@ async def _access_token():
             auth=(config.PAYPAL_CLIENT_ID, config.PAYPAL_CLIENT_SECRET),
         )
         r.raise_for_status()
-        _token["value"] = r.json()["access_token"]
+        data = r.json()
+        _token["value"] = data["access_token"]
+        _token["expires_at"] = time.time() + max(60, int(data.get("expires_in", 3600)) - 120)
         return _token["value"]
 
 

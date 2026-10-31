@@ -26,6 +26,15 @@ Freelancers and small agencies lose hours every week chasing late invoices, and 
 - **Backend** — FastAPI (Python), SQLite store, async httpx PayPal client.
 - **Frontend** — React + TypeScript + Vite, AG Grid for the finance dashboard.
 
+## For judges: run it against the real PayPal sandbox (≈5 minutes)
+
+The hosted demo runs in demo mode because PayPal does not offer account sign-up in the developer's country (Pakistan) — see "Challenges" in the Devpost submission. The PayPal integration is fully implemented, and you can verify it with your own sandbox app:
+
+1. At [developer.paypal.com](https://developer.paypal.com) → Apps & Credentials → **Create App** (Sandbox). Copy the **Client ID** and **Secret**.
+2. Clone this repo, then in `backend/`: copy `.env.example` to `.env` and paste the two values as `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET`. (An `OPENROUTER_API_KEY` is optional — every AI feature has a deterministic fallback.)
+3. Start the backend and frontend as in "Run it" below, and create an invoice from one sentence. The invoice is now a **real sandbox invoice**: the dashboard's PayPal link opens the genuine sandbox payer page, and paying it with a sandbox buyer account fires a real webhook (`INVOICING.INVOICE.PAID`) that flips the invoice to PAID. For the webhook to reach a local backend, expose it (step in "Run it") and subscribe your app to invoicing events.
+4. To confirm which mode you are in: `GET /health` returns `{"mock_mode": false}` when real credentials are active.
+
 ## Run it
 
 Backend:
