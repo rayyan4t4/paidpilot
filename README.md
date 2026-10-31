@@ -1,5 +1,10 @@
 # PaidPilot — Get Paid, On Autopilot
 
+**Live demo:** https://paidpilot-peach.vercel.app — dashboard, and each invoice has a client payment page at `/pay/<invoice-id>` where you can talk to the agent and watch it negotiate.
+**API:** https://paidpilot-api.onrender.com (health check at `/health`)
+
+> The live demo currently runs in demo mode: the full agent loop (invoice → follow-up → negotiation → payment confirmation) is real, while PayPal calls are simulated until sandbox credentials are provisioned. The PayPal integration code (Invoicing API + webhooks) is in `backend/app/paypal.py` and activates automatically when `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` are set.
+
 PaidPilot is an AI agent that handles the worst part of freelancing: getting paid. A freelancer describes the job in one sentence; PaidPilot creates and sends a real PayPal invoice, watches its status through PayPal webhooks, follows up with escalating reminders when payment is late, negotiates payment plans with the client inside clear guardrails set by the freelancer, and confirms the moment money lands.
 
 ## The problem
